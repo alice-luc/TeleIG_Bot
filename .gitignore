@@ -1,5 +1,5 @@
 volume_data
 .env
 .DS_Store
-.idea
-./IgSide/.idea
+.idea/
+./IgSide/.idea/
