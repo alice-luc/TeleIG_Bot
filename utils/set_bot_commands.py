@@ -9,3 +9,4 @@ async def set_default_commands(dp):
         types.BotCommand("start", "Запуск бота"),
         types.BotCommand("trial", "Начало пробной трехдневной версии"),
     ])
+

@@ -8,6 +8,11 @@ def rate_limit(limit: int, key=None):
     """
 
     def decorator(func):
+        """
+        main func that needs to be limited b time
+        :param func:
+        :return:
+        """
         setattr(func, 'throttling_rate_limit', limit)
         if key:
             setattr(func, 'throttling_key', key)

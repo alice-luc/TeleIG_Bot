@@ -14,6 +14,7 @@ from utils.misc import rate_limit
 @dp.message_handler(state=CheckState, text='Назад')
 async def back_activating(message: types.Message):
     """
+    goes back to menu
     :param message:
     """
     await MenuState.M1.set()
@@ -24,7 +25,7 @@ async def back_activating(message: types.Message):
 @dp.message_handler(state=CheckState.C1, text='Узнать, кто не подписан в ответ')
 async def rats_check_activating(message: types.Message):
     """
-
+    sets the state ad asks for auth data
     :param message:
     """
     await CheckState.C2.set()
@@ -37,6 +38,7 @@ async def rats_check_activating(message: types.Message):
 @dp.message_handler(state=CheckState.C1, text='Отписать ботов')
 async def bots_block_activating(message: types.Message):
     """
+    sets the state ad asks for auth data
 
     :param message:
     """
@@ -48,6 +50,8 @@ async def bots_block_activating(message: types.Message):
 @dp.message_handler(state=MenuState.M2, text='Проверить подписчиков')
 async def check_activating(message: types.Message):
     """
+        sets the state ad asks for the further action
+
 
     :param message:
     """
@@ -57,12 +61,17 @@ async def check_activating(message: types.Message):
 
 @dp.message_handler(state=CheckState.C2)
 async def rats_detecting_start(message: types.Message, state: FSMContext):
-    from IgSide.Server.check_bot import check
+    """
+    returns list of follows that dont follow the consumer back
+    :param message:
+    :param state:
+    """
+    from IgSide.Server.check_bot import check, rats_detection
     login = message.text.split(' ')[-1]
     tg_id = message.from_user.id
     await state.finish()
     if db.check_membership(tg_id, login):
-        rats = check.rats_detection(login)
+        rats = rats_detection(login)
         if rats:
             await message.answer('💩\nВот список крысёнышей, не подписанных в ответ:')
             await message.answer('\n'.join(rats))
@@ -70,10 +79,11 @@ async def rats_detecting_start(message: types.Message, state: FSMContext):
             await message.answer('Либо у тебя очень интересный профиль, либо ты забыл авторизоваться\n\
 Крысёнышей не обнаружено👍🏻')
 
+
 @dp.message_handler(state=CheckState.C3)
 async def login_unfollow_activating(message: types.Message):
     """
-
+    when data is given it goes to ig_bot and runs the unfollowing algorithm
     :param message:
     """
     from IgSide.Server import unfollow_bots_start

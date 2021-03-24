@@ -7,7 +7,7 @@ from data.config import admins
 
 async def on_startup_notify(dp: Dispatcher):
     """
-    notifies the owner when bot restarts
+    notifies the owner when the bot's got restarted
     """
     for admin in admins:
         try:
@@ -20,7 +20,7 @@ async def on_startup_notify(dp: Dispatcher):
 
 async def membership_notify(dp: Dispatcher, login, tg_id):
     """
-    notifies the owner when someone has registered its new acc
+    notifies the owner when someone has registered his new acc
     """
     for admin in admins:
         try:
@@ -32,7 +32,7 @@ async def membership_notify(dp: Dispatcher, login, tg_id):
 
 async def errors_notify(dp: Dispatcher, tg_id, login):
     """
-    notifies the owner when someone has registered its new acc
+    notifies owner when something went wrong(instead of logging
     """
     for admin in admins:
         try:

@@ -5,6 +5,21 @@ it inherits methods and like start class
 from IgSide.Server.methods import *
 
 
+def rats_detection(login):
+    """
+    runs afterlogic to detect a list of accounts that dont follow the consumer back
+    :param login:
+    :return:
+    """
+    followers = set(open_file(login, 'followers'))
+    following = set(open_file(login, 'following'))
+    rats = [follow for follow in following if follow not in followers]
+    if rats:
+        return list(rats)
+    else:
+        return None
+
+
 class Check:
     """
     Check class mostly be using once a while
@@ -26,6 +41,8 @@ class Check:
         await asyncio.gather(check_following(login, browser))
         await asyncio.gather(check_followers(login, browser))
         un = 0  # temp variable for unfollowed accounts' counting
+        # comprehensions the list of accounts that need to be checked(except the ones the consumer follows, and the ones
+        # that are checked already
         urls = set(open_file(login, 'followers'))
         following = set(open_file(login, 'following'))
         unfollowed = set(open_file(login, 'checked'))
@@ -34,6 +51,7 @@ class Check:
         log_variable_write(u' UNFOLLOW BOTS follows ad following lists were loaded, \
                             checking starts for %s users %s', len(urls), login)
 
+        # runs logic to detect bots accounts by the number of following pages
         while urls:
             browser.get(urls.pop())
             await asyncio.sleep(random.randrange(4, 6))
@@ -105,7 +123,7 @@ class Check:
             browser.find_element_by_css_selector(dataIns.block_sure_button).click()
             await asyncio.sleep(random.randrange(2, 4))
             if xpath_exists(dataIns.autom_check, browser):
-                log_write(u' UNFOLLOW atomization check has been failed while unfollowing, turning off for 2 hours %s', 'hui')
+                log_write(u' UNFOLLOW atomization check has been failed while unfollowing, turning off for 2 hours %s', 'log')
                 browser.find_element_by_css_selector(dataIns.autom_check_report).click()
                 await asyncio.sleep(7200)
             browser.find_element_by_css_selector(dataIns.dismiss_button).click()
@@ -121,36 +139,28 @@ class Check:
                     await asyncio.sleep(random.randrange(3, 5))
                     browser.find_element_by_css_selector(dataIns.unblock_sure_button).click()
                     await asyncio.sleep(random.randrange(3, 5))
-                    if xpath_exists(dataIns.autom_check,browser):
+                    if xpath_exists(dataIns.autom_check, browser):
                         log_write(u' UNFOLLOW atomization check has been failed while unfollowing, turning off for 2 \
-                        hours %s', 'hui')
+                        hours %s', 'log')
                         browser.find_element_by_css_selector(dataIns.autom_check_report).click()
                         await asyncio.sleep(7200)
                     else:
                         browser.find_element_by_css_selector(dataIns.dismiss_button).click()
                         await asyncio.sleep(random.randrange(1, 3))
                 else:
-                    log_variable_write(u' UNFOLLOW user is already blocked %s %s', acc_name, 'hui')
-            except Exception as error:
-                log_variable_write(u' UNFOLLOW no such element, link is not real %s %s', error, 'hui')
+                    log_variable_write(u' UNFOLLOW user is already blocked %s %s', acc_name, 'log')
+            except NoSuchElementException as error:
+                log_variable_write(u' UNFOLLOW no such element, link is not real %s %s', error, 'log')
                 await asyncio.sleep(2)
-            log_variable_write(u' UNFOLLOW user was blocked %s %s', acc_name, 'hui')
-        except Exception as error:
-            log_variable_write(u' UNFOLLOW blocking failed %s %s', error, 'hui')
+            log_variable_write(u' UNFOLLOW user was blocked %s %s', acc_name, 'log')
+        except NoSuchElementException as error:
+            log_variable_write(u' UNFOLLOW blocking failed %s %s', error, 'log')
         await asyncio.sleep(random.randrange(1200, 1800))
-
-    def rats_detection(self, login):
-        followers = set(open_file(login,'followers'))
-        following = set(open_file(login, 'following'))
-        rats = [follow for follow in following if follow not in followers]
-        if rats:
-            return list(rats)
-        else:
-            return None
 
 
 def unfollow_bots_start(login, tg_ig):
     """
+    run
     starts loop
     login: instagram login
     """

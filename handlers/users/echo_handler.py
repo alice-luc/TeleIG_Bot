@@ -9,7 +9,7 @@ from utils.misc import rate_limit
 @dp.message_handler()
 async def bot_echo(message: types.Message, state: FSMContext):
     """
-    returns such message back to user
+    returns messages back to user
     """
     await state.finish()
     await message.answer('Для старта введите команду\n/start')

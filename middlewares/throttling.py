@@ -19,6 +19,11 @@ class ThrottlingMiddleware(BaseMiddleware):
 
     # noinspection PyUnusedLocal
     async def on_process_message(self, message: types.Message, data: dict):
+        """
+        throttle messages to avoid flooding
+        :param message:
+        :param data:
+        """
         handler = current_handler.get()
         dispatcher = Dispatcher.get_current()
         if handler:
@@ -34,6 +39,11 @@ class ThrottlingMiddleware(BaseMiddleware):
             raise CancelHandler()
 
     async def message_throttled(self, message: types.Message, throttled: Throttled):
+        """
+        limits the reqquests iforming the consumer about reaching the (x)seconds limit reached
+        :param message:
+        :param throttled:
+        """
         handler = current_handler.get()
         dispatcher = Dispatcher.get_current()
         if handler:

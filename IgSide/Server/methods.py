@@ -350,6 +350,11 @@ def set_cookies(login, browser):
 
 
 async def after_auth(login, browser):
+    """
+    makes a queue of tasks to be ran after the auth method
+    :param login:
+    :param browser:
+    """
     await asyncio.sleep(random.randrange(2,4))
     await asyncio.gather(check_followers(login, browser))
     await asyncio.gather(check_following(login, browser))
@@ -367,7 +372,7 @@ async def auth(log, passw, browser):
     try:
         set_cookies(log, browser)
         log_write(u'logged in via cookies', log)
-    except:
+    except FileNotFoundError:
         try:
             browser.get(dataIns.url)
             await asyncio.sleep(random.randrange(2, 3))
@@ -391,6 +396,11 @@ async def auth(log, passw, browser):
 
 
 async def first_auth(log, passw):
+    """
+    a method that freezes for some time and allows to enter a security code manually
+    :param log:
+    :param passw:
+    """
     browser = init()
     try:
         browser.get(dataIns.url)

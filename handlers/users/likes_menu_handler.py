@@ -1,10 +1,8 @@
 import threading
 
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Command
 from aiogram.types import ParseMode
 
-from IgSide import auth_start
 from data.config import admins
 from keyboards.default import like_menu_buttons, menu_buttons, start_menu_buttons
 from loader import dp, db
@@ -27,7 +25,7 @@ async def back_activating(message: types.Message):
 @dp.message_handler(state=LikeState.Li2)
 async def taking_datas_for_likes(message: types.Message):
     """
-    starts ig-side code which likes followers of your followers
+    starts ig-side code which likes followers of consumer's followers
     """
     from IgSide.Server import like_start
     login = message.text.split(' ')[0]

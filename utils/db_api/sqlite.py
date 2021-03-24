@@ -71,7 +71,7 @@ class Database:
 
     def create_trial_ig(self):
         """
-        creates a table if it does not exists yet
+        creates a table for trial subscription if it does not exists yet
         """
         sql = '''
         CREATE TABLE Trial_IG (
@@ -97,7 +97,7 @@ class Database:
 
     def ig_select_user(self, tg_id, login):
         """
-        checks whether the user exists
+        checks whether the user exists and returns one's data
         """
         sql = 'SELECT * FROM Users_IG WHERE tg_id = ? AND login = ?'
         user_row = self.execute(sql, parameters=(tg_id, login), fetchall=True)
@@ -109,7 +109,7 @@ class Database:
 
     def update_membership(self, login):
         """
-        makes subscription value to be equal 1 and to return true when checking
+        makes subscription value to be equal 1 to be returned as true on subscription check
         """
         days = datetime.date.today()
         delta = datetime.timedelta(days=30)
@@ -119,7 +119,7 @@ class Database:
 
     def check_accounts(self, tg_id, tg_username):
         """
-        returns a list of accounts that belong to this tg user
+        returns a list of accounts(login + purchased date) that belong to this tg user. Returns None if there isnt any
         """
         sql = 'SELECT login, purchase_ending FROM Users_IG WHERE tg_id = ? AND tg_username = ?'
         users_row = self.execute(sql, parameters=(tg_id, tg_username), fetchall=True)
@@ -137,7 +137,7 @@ class Database:
         sql = 'SELECT status FROM Users_IG WHERE tg_id = ? AND login = ?'
         status_row = self.execute(sql, parameters=(tg_id, login), fetchone=True)
         if status_row:
-            status = status_row[0]
+            status = status_row[0]  # needs to be tested, some requests were returning invalid data
             return status
         else:
             return None
@@ -151,7 +151,7 @@ class Database:
 
     def trial_select_user(self, tg_id, login):
         """
-        checks whether the user exists
+        checks whether the user has ran the trial version already and returns the one's data on success
         """
         tg_id = str(tg_id)
         sql = 'SELECT * FROM Trial_IG WHERE tg_id = ? AND login = ?'
@@ -164,11 +164,9 @@ class Database:
 
     def trial_add_user(self, tg_id: str, login: str):
         """
-        adds user into database
+        adds user into trial_users database
         """
-        # from IgSide.dataIns import proxies_data
         sql = 'INSERT INTO Trial_IG(tg_id, login) VALUES(?, ?)'
-        # proxy = proxies_data[random.randrange(len(proxies_data))]
         parameters = (tg_id, login)
         if not self.trial_select_user(tg_id, login):
             self.execute(sql, parameters=parameters, commit=True)
@@ -177,7 +175,8 @@ class Database:
 
     def global_check(self):
         """
-        makes check every day whether the subscription still valid
+        Suppose to check db every day on whether the subscription's still valid
+        Could also add a notifying directly to the user to make him prolong the membership
         """
         days = datetime.date.today()
         sql = 'SELECT tg_id, login FROM Users_IG WHERE purchase_ending = ?'

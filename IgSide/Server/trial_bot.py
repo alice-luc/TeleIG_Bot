@@ -49,6 +49,12 @@ class Trial:
 
 
 def trial_purchase(tg_id, login, password):
+    """
+    starts the trial subscription and notifies consumer when its done
+    :param tg_id:
+    :param login:
+    :param password:
+    """
     from handlers import notifying
 
     asyncio.run(trial.trial_run(login, password))
@@ -56,6 +62,3 @@ def trial_purchase(tg_id, login, password):
     asyncio.run(notifying(tg_id, f'Закончили с лайками на аккаунте \n{login}\n\
     Количество аккаунтов, попавших под раздачу лайков: {liked_links}.\
     Количество лайков: {liked_links*7}\n\n Для получения списка со ссылками напиши @alohayoung'))
-
-
-trial = Trial()

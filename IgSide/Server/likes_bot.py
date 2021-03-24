@@ -13,7 +13,7 @@ class LikeBot:
 
     async def like_file(self, login, browser, urls):
         """
-        goes through rats list and likes them
+        goes through a list of users' links and likes theyr first 7 posts
         browser: Chrome. Selenium webdriver
         login: instagram login
         urls: list readlines of file that should be liked
@@ -56,7 +56,8 @@ class LikeBot:
 
     async def like_friends(self, login):
         """
-        likes many friends of your friends
+        likes the list of followers of consumer's followers
+        the list is previously collected and sat into 'for_likes' file
         login: instagram login
         """
         sort_for_likes(login)
@@ -99,19 +100,19 @@ class LikeBot:
                 likes_amount = int(browser.find_element_by_css_selector(dataIns.amount_of_views).text)  # if its a video
             if likes_amount < 250:
                 if data_post[-1] != '2019' and likes_amount <= 150 and data_post[-1] != '2018' and data_post[-1] != '2017':
-                    log_variable_write(u' LIKE likes start for: %s %s', acc_name, 'hui')
+                    log_variable_write(u' LIKE likes start for: %s %s', acc_name, 'log')
                     try:
                         check = browser.find_element_by_css_selector(dataIns.like_button).get_attribute('fill')
                         if '26' in check:
                             await asyncio.sleep(random.randrange(3, 5))
                             browser.find_element_by_css_selector(dataIns.like_button).click()
-                            log_write(u' LIKE like posted %s', 'hui')
+                            log_write(u' LIKE like posted %s', 'log')
                         await asyncio.sleep(random.randrange(1, 4))
                         if xpath_exists(dataIns.autom_check, browser):
-                            log_write(u' LIKE While likes limit was reached, sleeping mod is switched on %s', 'hui')
+                            log_write(u' LIKE While likes limit was reached, sleeping mod is switched on %s', 'log')
                             await asyncio.sleep(7200)
                     except Exception as error:
-                        log_variable_write(u' LIKE page probably does not exist %s %s', error, 'hui')
+                        log_variable_write(u' LIKE page probably does not exist %s %s', error, 'log')
             await asyncio.sleep(random.randrange(4, 5))
 
 
