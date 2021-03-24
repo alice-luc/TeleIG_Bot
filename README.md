@@ -14,6 +14,6 @@ Container volume - volume_data
     - unfollowed (with a list of unfollowed accounts. Or due the check on artificialness either the check of back follow request)
   - insta_log 
     - contains logs named by the time they were created 
-  - DB _contains 2 tables_:
+  - DB <br>_contains 2 tables_:
     - IG_users ( the main table with identification and proxy data)
     - Trial_users ( for those who ran the trial version) 
