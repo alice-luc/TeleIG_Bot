@@ -3,7 +3,7 @@ import threading
 from aiogram.dispatcher import FSMContext
 from aiogram.types import ParseMode
 
-from data.config import admins
+from config import admins
 from keyboards.default import like_menu_buttons, menu_buttons, start_menu_buttons
 from loader import dp, db
 from aiogram import types

@@ -2,3 +2,4 @@ volume_data
 .env
 .idea/
 .DS_Store
+env/

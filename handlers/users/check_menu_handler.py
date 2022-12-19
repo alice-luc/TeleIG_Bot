@@ -66,7 +66,7 @@ async def rats_detecting_start(message: types.Message, state: FSMContext):
     :param message:
     :param state:
     """
-    from IgSide.Server.check_bot import check, rats_detection
+    from IgSide.Server.check_bot import rats_detection
     login = message.text.split(' ')[-1]
     tg_id = message.from_user.id
     await state.finish()
@@ -93,7 +93,7 @@ async def login_unfollow_activating(message: types.Message):
     await MenuState.M1.set()
     if db.check_membership(tg_id, login):
         threading.Thread(target=unfollow_bots_start, args=(login, tg_id)).start()
-        from data.config import admins
+        from config import admins
         await notifying(admins[0], f'Запущена проверка подписчиков у {login}')
         await message.answer('✅ Принято!\nЯ начал чистить список твоих подписчиков от ботов. Когда закончу, дам знать!',
                              reply_markup=menu_buttons)

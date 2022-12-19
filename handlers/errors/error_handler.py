@@ -1,4 +1,4 @@
-from data.config import admins
+from config import admins
 from ..users import notifying
 from loader import dp
 

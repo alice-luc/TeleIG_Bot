@@ -1,6 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher.filters.builtin import Command
-from data.config import greating_text
+from config import greating_text
 from loader import dp
 from keyboards.default import start_menu_buttons
 from utils.misc import rate_limit
@@ -21,5 +21,5 @@ async def bot_info(message: types.Message):
     """
     Method returns supporting text for new users
     """
-    from data.config import more_text
+    from config import more_text
     await message.answer(more_text, reply_markup=start_menu_buttons)
