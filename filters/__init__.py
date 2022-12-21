@@ -1,5 +1,5 @@
 from aiogram import Dispatcher
 
 
-def setup(dp: Dispatcher):
+def setup(dispatcher: Dispatcher):
     pass

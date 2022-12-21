@@ -1,9 +1,9 @@
 from data.config import admins
 from ..users import notifying
-from loader import dp
+from loader import dispatcher
 
 
-@dp.errors_handler()
+@dispatcher.errors_handler()
 async def errors_handler(update, exception):
     """
     Exceptions handler. Catches all exceptions within task factory tasks.
