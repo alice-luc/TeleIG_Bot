@@ -5,7 +5,6 @@ class LoginState(StatesGroup):
     """
     Allows to track whether user is logged in
     """
-
     L2 = State()
 
 
@@ -15,7 +14,6 @@ class MenuState(StatesGroup):
     M1 - check followers or give likes?
     M2 - when user chooses to check followers or to get statistics
     """
-
     M1 = State()
     M2 = State()
 
@@ -27,7 +25,6 @@ class LikeState(StatesGroup):
     Li2 - Likes of followers' followers list
     Li3 - Likes of hashtags
     """
-
     Li1 = State()
     Li2 = State()
     Li3 = State()

@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from loader import dp, db
 from keyboards import insta_menu_buttons, menu_buttons, start_menu_buttons
-from states.menu_state import MenuState
+from states import MenuState
 from utils.misc import rate_limit
 
 

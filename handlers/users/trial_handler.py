@@ -4,8 +4,8 @@ from aiogram.dispatcher.filters import Command
 
 from IgSide.Server.trial_bot import trial_purchase
 from keyboards.default import start_menu_buttons
-from states.trial_state import TrialState
-from loader import db,dp
+from states import TrialState
+from loader import db, dp
 from utils.misc import rate_limit
 from utils.notify_admins import membership_notify, errors_notify
 import threading
