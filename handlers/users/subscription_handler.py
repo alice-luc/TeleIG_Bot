@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters import Command
 from aiogram.types import ParseMode
 
 from keyboards.default import start_menu_buttons
-from states.login_state import LoginState
+from states import LoginState
 from loader import db, dp
 from utils.misc import rate_limit
 from utils.notify_admins import membership_notify, errors_notify
