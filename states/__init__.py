@@ -1,4 +1,3 @@
-from states.login_state import LoginState
-from states.like_state import LikeState
-from states.menu_state import MenuState
-from states.check_state import CheckState
+from states.state_classes import LoginState, LikeState, MenuState, CheckState, TrialState
+
+__all__ = ['LoginState', 'LikeState', 'MenuState', 'CheckState', 'TrialState']

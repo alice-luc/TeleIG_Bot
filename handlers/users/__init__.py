@@ -1,9 +1,9 @@
-from .start_menu_handler import dp
-from .subscription_handler import dp, notifying
-from .trial_handler import dp
-from .menu_handler import dp
-from .check_menu_handler import dp
-from .likes_menu_handler import dp
-from .echo_handler import dp
+from .start_menu_handler import dispatcher
+from .subscription_handler import dispatcher, notifying
+from .trial_handler import dispatcher
+from .menu_handler import dispatcher
+from .check_menu_handler import dispatcher
+from .likes_menu_handler import dispatcher
+from .echo_handler import dispatcher
 
-__all__ = ['dp', 'notifying']
+__all__ = ['dispatcher', 'notifying']

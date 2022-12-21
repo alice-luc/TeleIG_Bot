@@ -2,7 +2,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import ParseMode
 
 from keyboards.default import check_menu_buttons, menu_buttons
-from loader import dp, db
+from loader import dispatcher, data_base
 from aiogram import types
 from states import MenuState, CheckState
 import threading
@@ -11,7 +11,7 @@ from utils.misc import rate_limit
 
 
 @rate_limit(1, 'Назад')
-@dp.message_handler(state=CheckState, text='Назад')
+@dispatcher.message_handler(state=CheckState, text='Назад')
 async def back_activating(message: types.Message):
     """
     goes back to menu
@@ -22,7 +22,7 @@ async def back_activating(message: types.Message):
 
 
 @rate_limit(5, 'Узнать, кто не подписан в ответ')
-@dp.message_handler(state=CheckState.C1, text='Узнать, кто не подписан в ответ')
+@dispatcher.message_handler(state=CheckState.C1, text='Узнать, кто не подписан в ответ')
 async def rats_check_activating(message: types.Message):
     """
     sets the state ad asks for auth data
@@ -35,7 +35,7 @@ async def rats_check_activating(message: types.Message):
 
 
 @rate_limit(5, 'Отписать ботов')
-@dp.message_handler(state=CheckState.C1, text='Отписать ботов')
+@dispatcher.message_handler(state=CheckState.C1, text='Отписать ботов')
 async def bots_block_activating(message: types.Message):
     """
     sets the state ad asks for auth data
@@ -47,7 +47,7 @@ async def bots_block_activating(message: types.Message):
 
 
 @rate_limit(5, 'Проверить подписчиков')
-@dp.message_handler(state=MenuState.M2, text='Проверить подписчиков')
+@dispatcher.message_handler(state=MenuState.M2, text='Проверить подписчиков')
 async def check_activating(message: types.Message):
     """
         sets the state ad asks for the further action
@@ -59,7 +59,7 @@ async def check_activating(message: types.Message):
     await message.answer('Что ты хочешь?', reply_markup=check_menu_buttons)
 
 
-@dp.message_handler(state=CheckState.C2)
+@dispatcher.message_handler(state=CheckState.C2)
 async def rats_detecting_start(message: types.Message, state: FSMContext):
     """
     returns list of follows that dont follow the consumer back
@@ -70,7 +70,7 @@ async def rats_detecting_start(message: types.Message, state: FSMContext):
     login = message.text.split(' ')[-1]
     tg_id = message.from_user.id
     await state.finish()
-    if db.check_membership(tg_id, login):
+    if data_base.check_membership(tg_id, login):
         rats = rats_detection(login)
         if rats:
             await message.answer('💩\nВот список крысёнышей, не подписанных в ответ:')
@@ -80,7 +80,7 @@ async def rats_detecting_start(message: types.Message, state: FSMContext):
 Крысёнышей не обнаружено👍🏻')
 
 
-@dp.message_handler(state=CheckState.C3)
+@dispatcher.message_handler(state=CheckState.C3)
 async def login_unfollow_activating(message: types.Message):
     """
     when data is given it goes to ig_bot and runs the unfollowing algorithm
@@ -91,7 +91,7 @@ async def login_unfollow_activating(message: types.Message):
     login = message.text
     tg_id = message.from_user.id
     await MenuState.M1.set()
-    if db.check_membership(tg_id, login):
+    if data_base.check_membership(tg_id, login):
         threading.Thread(target=unfollow_bots_start, args=(login, tg_id)).start()
         from data.config import admins
         await notifying(admins[0], f'Запущена проверка подписчиков у {login}')

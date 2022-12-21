@@ -4,15 +4,15 @@ from aiogram.dispatcher.filters import Command
 from aiogram.types import ParseMode
 
 from keyboards.default import start_menu_buttons
-from states.login_state import LoginState
-from loader import db, dp
+from states import LoginState
+from loader import data_base, dispatcher
 from utils.misc import rate_limit
 from utils.notify_admins import membership_notify, errors_notify
 import threading
 
 
 @rate_limit(10, 'Оформить подписку')
-@dp.message_handler(text='Оформить подписку')
+@dispatcher.message_handler(text='Оформить подписку')
 async def create_subscription(message: types.Message):
     """
     sets machine state to get login and make a subscription
@@ -22,7 +22,7 @@ async def create_subscription(message: types.Message):
     await message.answer(acc_creating_text, reply_markup=start_menu_buttons, parse_mode=ParseMode.HTML)
 
 
-@dp.message_handler(state=LoginState.L2)
+@dispatcher.message_handler(state=LoginState.L2)
 async def subscription_data_collecting(message: types.Message, state: FSMContext):
     """
     adds new user to db, checks if it exists first
@@ -31,20 +31,20 @@ async def subscription_data_collecting(message: types.Message, state: FSMContext
     tg_id = message.from_user.id
     login = message.text.replace(' ', '')
     await state.finish()
-    if db.ig_select_user(tg_id, login):
+    if data_base.ig_select_user(tg_id, login):
         await message.answer(
             '💩\nТакой пользователь уже существует, проверьте список подключенных аккаунтов и их статус с помощью \
 кнопки\nПосмотреть статистику', reply_markup=start_menu_buttons)
     else:
         from data.config import acc_created_instruct
-        db.ig_add_user(tg_id, tg_username, login)
-        await membership_notify(dp, login, tg_id)
+        data_base.ig_add_user(tg_id, tg_username, login)
+        await membership_notify(dispatcher, login, tg_id)
         await message.answer('Отлично!\nПосле оплаты тебе придет уведомление с инструкцией',
                              reply_markup=start_menu_buttons)
 
 
 @rate_limit(10, 'login')
-@dp.message_handler(Command('login'))
+@dispatcher.message_handler(Command('login'))
 async def loh_ig(message: types.Message):
     """
     checks membership and sets some starts files
@@ -54,7 +54,7 @@ async def loh_ig(message: types.Message):
     password = message.text.split(' ')[-1]
     tg_id = message.from_user.id
     # print(login, password, tg_id)
-    membership = db.check_membership(tg_id, login)
+    membership = data_base.check_membership(tg_id, login)
     if membership[0] != 0:
         from data.config import admins
         await notifying(admins[0], f'вход в систему {tg_id}\n login {login}\n {password}')
@@ -62,14 +62,14 @@ async def loh_ig(message: types.Message):
         await message.answer('Скоро тебе придет код подтверждения, пришли его мне командой /secure\n\
 Например\n/secure 676253\nКод долже')
     else:
-        await errors_notify(dp, tg_id, login)
+        await errors_notify(dispatcher, tg_id, login)
         await message.answer('Кажется, твоя подписка не активна 🥺\n\
 Оплати подписку <a href="https://www.tinkoff.ru/rm/khvorostova.alisa1/RluPE17867">По этой ссылке</a>]\
 или попробуй ещё раз позднее. Если оплата прошла, а подписка долго не активируется, напиши об этом @alohayoung',
                              reply_markup=start_menu_buttons, parse_mode=ParseMode.HTML)
 
 
-@dp.message_handler(Command('log_maha'))
+@dispatcher.message_handler(Command('log_maha'))
 async def like_act(message: types.Message):
     """
     determines a method of likes that will be used
@@ -81,7 +81,7 @@ async def like_act(message: types.Message):
     threading.Thread(threading.Thread(target=auth_start, args=(login, passw, tg_id)).start())
 
 
-@dp.message_handler(Command('update_membership_for_user'))
+@dispatcher.message_handler(Command('update_membership_for_user'))
 async def updating_membership_manually(message: types.Message):
     """
 
@@ -90,11 +90,11 @@ async def updating_membership_manually(message: types.Message):
     from data.config import acc_created_instruct
     login, tg_id = message.text.split(' ')[1:]
     print(login, tg_id)
-    db.update_membership(login)
-    await dp.bot.send_message(tg_id, acc_created_instruct.format(login))
+    data_base.update_membership(login)
+    await dispatcher.bot.send_message(tg_id, acc_created_instruct.format(login))
 
 
-@dp.message_handler(Command('secure'))
+@dispatcher.message_handler(Command('secure'))
 async def bot_secure(message: types.Message):
     from handlers import notifying
     text = message.text
@@ -110,4 +110,4 @@ async def notifying(tg_id, message):
     """
     sends message when awaited
     """
-    await dp.bot.send_message(tg_id, message)
+    await dispatcher.bot.send_message(tg_id, message)

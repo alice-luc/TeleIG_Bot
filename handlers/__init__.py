@@ -1,4 +1,4 @@
-from .errors import dp
-from .users import dp, notifying
+from .errors import dispatcher
+from .users import dispatcher, notifying
 
-__all__ = ['dp', 'notifying']
+__all__ = ['dispatcher', 'notifying']

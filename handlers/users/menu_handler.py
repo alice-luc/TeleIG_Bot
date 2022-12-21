@@ -1,13 +1,13 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from loader import dp, db
+from loader import dispatcher, data_base
 from keyboards import insta_menu_buttons, menu_buttons, start_menu_buttons
-from states.menu_state import MenuState
+from states import MenuState
 from utils.misc import rate_limit
 
 
 @rate_limit(5, 'Меню')
-@dp.message_handler(text="Меню")
+@dispatcher.message_handler(text="Меню")
 async def show_menu(message: types.Message):
     """
     returns menu buttons to be chosen
@@ -17,7 +17,7 @@ async def show_menu(message: types.Message):
 
 
 @rate_limit(5, 'Продвигать Instagram-аккаунт')
-@dp.message_handler(state=MenuState.M1, text='Продвигать инстаграм аккаунт')
+@dispatcher.message_handler(state=MenuState.M1, text='Продвигать инстаграм аккаунт')
 async def insta_choice(message: types.Message):
     """
     returns insta options keyboard
@@ -27,7 +27,7 @@ async def insta_choice(message: types.Message):
 
 
 @rate_limit(1, 'Назад')
-@dp.message_handler(state=MenuState.M1, text='Назад')
+@dispatcher.message_handler(state=MenuState.M1, text='Назад')
 async def back_activating(message: types.Message, state: FSMContext):
     """
     returns None of states and none of keyboards
@@ -37,7 +37,7 @@ async def back_activating(message: types.Message, state: FSMContext):
 
 
 @rate_limit(60, 'Посмотреть статистику')
-@dp.message_handler(state=MenuState.M1, text='Посмотреть статистику')
+@dispatcher.message_handler(state=MenuState.M1, text='Посмотреть статистику')
 async def statistic(message: types.Message):
     """
     NEEDS TO BE FIXED
@@ -46,7 +46,7 @@ async def statistic(message: types.Message):
     """
     tg_id = message.from_user.id
     tg_username = message.from_user.username
-    accs_row = db.check_accounts(tg_id, tg_username)
+    accs_row = data_base.check_accounts(tg_id, tg_username)
     if len(accs_row) == 1:
         accs = ['Ник'+': '+str(accs_row[0]), 'Дата истечения подписки'+': '+str(accs_row[1])]
     elif len(accs_row) > 1:

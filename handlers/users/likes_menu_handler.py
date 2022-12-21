@@ -5,7 +5,7 @@ from aiogram.types import ParseMode
 
 from data.config import admins
 from keyboards.default import like_menu_buttons, menu_buttons, start_menu_buttons
-from loader import dp, db
+from loader import dispatcher, data_base
 from aiogram import types
 from states import LikeState, MenuState
 from utils.misc import rate_limit
@@ -13,7 +13,7 @@ from handlers.users.subscription_handler import notifying
 
 
 @rate_limit(1, 'Назад')
-@dp.message_handler(state=LikeState, text='Назад')
+@dispatcher.message_handler(state=LikeState, text='Назад')
 async def back_activating(message: types.Message):
     """
     if user chose back option
@@ -22,7 +22,7 @@ async def back_activating(message: types.Message):
     await message.answer('Выбери дейсивие', reply_markup=menu_buttons)
 
 
-@dp.message_handler(state=LikeState.Li2)
+@dispatcher.message_handler(state=LikeState.Li2)
 async def taking_datas_for_likes(message: types.Message):
     """
     starts ig-side code which likes followers of consumer's followers
@@ -31,7 +31,7 @@ async def taking_datas_for_likes(message: types.Message):
     login = message.text.split(' ')[0]
     tg_id = message.from_user.id
     await MenuState.M1.set()
-    membership = db.check_membership(tg_id, login)
+    membership = data_base.check_membership(tg_id, login)
     if membership != 0:
         await notifying(admins[0], f'Лайки поехали {login}')
         threading.Thread(target=like_start, args=(login,)).start()
@@ -44,7 +44,7 @@ async def taking_datas_for_likes(message: types.Message):
 раз позднее.', reply_markup=menu_buttons, parse_mode=ParseMode.HTML)
 
 
-@dp.message_handler(state=LikeState.Li3)
+@dispatcher.message_handler(state=LikeState.Li3)
 async def dif_consuming_data_for_likes(message: types.Message, state: FSMContext):
     """
     another method of likes is to go to hashtags' posts
@@ -55,10 +55,10 @@ async def dif_consuming_data_for_likes(message: types.Message, state: FSMContext
     tg_id = message.from_user.id
     await state.finish()
     print(login, hashtags_list)
-    membership = db.check_membership(tg_id, login)
+    membership = data_base.check_membership(tg_id, login)
     print(membership)
     if membership != 0:
-        print(db.ig_select_user(tg_id, login))
+        print(data_base.ig_select_user(tg_id, login))
         await notifying(admins[0], f'Лайки поехали {login}')
         try:
             threading.Thread(target=like_start, args=(login,)).start()
@@ -74,7 +74,7 @@ async def dif_consuming_data_for_likes(message: types.Message, state: FSMContext
 
 
 @rate_limit(5, 'Друзей друзей')
-@dp.message_handler(state=LikeState.Li1, text='Друзей друзей')
+@dispatcher.message_handler(state=LikeState.Li1, text='Друзей друзей')
 async def choosing_the_method_of_likes(message: types.Message):
     """
     asks for a login to begin likes method
@@ -85,7 +85,7 @@ async def choosing_the_method_of_likes(message: types.Message):
 
 
 @rate_limit(5, 'Хэштеги и локации')
-@dp.message_handler(state=LikeState.Li1, text='Хэштеги и локации')
+@dispatcher.message_handler(state=LikeState.Li1, text='Хэштеги и локации')
 async def choosing_the_method_of_likes1(message: types.Message):
     """
     collects hashtags' list within the next message
@@ -98,7 +98,7 @@ async def choosing_the_method_of_likes1(message: types.Message):
 
 
 @rate_limit(5, 'Раздавать лайки')
-@dp.message_handler(state=MenuState.M2, text='Раздавать лайки')
+@dispatcher.message_handler(state=MenuState.M2, text='Раздавать лайки')
 async def like_activating(message: types.Message):
     """
     determines a method of likes that will be used
